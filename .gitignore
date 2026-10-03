@@ -1,32 +1,14 @@
-# ==========================================
-# Datasets (Too large for GitHub)
-# ==========================================
 data/
-monolith/data/
+experiments/
+*.pt
+*.pth
 *.csv
 *.npz
 *.jpg
 *.png
-
-# ==========================================
-# Experiment Artifacts (Checkpoints, Logs)
-# ==========================================
-experiments/
-*.pt
-*.pth
-*.log
-
-# ==========================================
-# Python / Jupyter / Environment
-# ==========================================
 __pycache__/
 .ipynb_checkpoints/
-*.pyc
 mlenv/
 venv/
 .env
-
-# ==========================================
-# OS / Misc
-# ==========================================
 .DS_Store
