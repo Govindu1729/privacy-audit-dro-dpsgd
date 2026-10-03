@@ -1,0 +1,23 @@
+{
+  "total_samples": 33483,
+  "train_samples": 26786,
+  "val_samples": 6697,
+  "male_samples": 16763,
+  "female_samples": 16720,
+  "male_train": 13410,
+  "male_val": 3353,
+  "female_train": 13376,
+  "female_val": 3344,
+  "batch_size": 16,
+  "image_size": [
+    224,
+    224
+  ],
+  "random_seed": 42,
+  "age_stats": {
+    "min": 1,
+    "max": 116,
+    "mean": 32.16614401337993,
+    "std": 21.501419618962956
+  }
+}

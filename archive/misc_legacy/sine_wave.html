@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Interactive Sine Wave</title>
+<style>
+body { font-family: system-ui, monospace; margin: 16px; background: #fafafa; }
+canvas { border: 1px solid #ccc; background: #fff; }
+label { display: inline-block; margin: 6px 12px 6px 0; }
+input[type=range] { vertical-align: middle; }
+</style>
+</head>
+<body>
+<h3>Interactive Sine Wave</h3>
+<label>Amplitude <input type="range" id="amp" min="0.1" max="3" step="0.1" value="1"><span id="ampVal">1.0</span></label>
+<label>Frequency <input type="range" id="freq" min="0.5" max="5" step="0.1" value="1"><span id="freqVal">1.0</span></label>
+<label>Phase <input type="range" id="phase" min="0" max="6.28" step="0.05" value="0"><span id="phaseVal">0.0</span></label>
+<canvas id="cv" width="800" height="400"></canvas>
+<script>
+const cv = document.getElementById('cv');
+const ctx = cv.getContext('2d');
+const amp = document.getElementById('amp');
+const freq = document.getElementById('freq');
+const phase = document.getElementById('phase');
+
+function draw() {
+  const W = cv.width, H = cv.height;
+  const a = parseFloat(amp.value);
+  const f = parseFloat(freq.value);
+  const p = parseFloat(phase.value);
+  document.getElementById('ampVal').textContent = a.toFixed(1);
+  document.getElementById('freqVal').textContent = f.toFixed(1);
+  document.getElementById('phaseVal').textContent = p.toFixed(2);
+
+  ctx.clearRect(0,0,W,H);
+  // axes
+  ctx.strokeStyle = '#ddd';
+  ctx.beginPath();
+  ctx.moveTo(0,H/2); ctx.lineTo(W,H/2);
+  ctx.moveTo(W/2,0); ctx.lineTo(W/2,H);
+  ctx.stroke();
+  // wave: y = a * sin(f * t + p), t spans 4*pi over width
+  ctx.strokeStyle = '#2563eb';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  for (let x = 0; x <= W; x++) {
+    const t = (x / W) * 4 * Math.PI;
+    const yy = H/2 - a * 60 * Math.sin(f * t + p);
+    if (x === 0) ctx.moveTo(x, yy); else ctx.lineTo(x, yy);
+  }
+  ctx.stroke();
+}
+[amp, freq, phase].forEach(el => el.addEventListener('input', draw));
+draw();
+</script>
+</body>
+</html>
