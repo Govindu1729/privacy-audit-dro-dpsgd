@@ -22,6 +22,10 @@ class SteinkeAuditor:
     - p-value under null hypothesis
     - epsilon lower bound
     - AUC, attack accuracy, Cohen's d
+    
+    IMPORTANT: White-box scores use SIGN CORRECTION (MA-06).
+    Members score NEGATIVE on ⟨Δθ, gᵢ⟩ because gradient descent moves
+    weights along -g. Multiply raw dot product by -1.0 before audit.
     """
     
     def __init__(self, gamma=0.05):

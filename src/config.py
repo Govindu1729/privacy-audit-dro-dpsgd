@@ -31,10 +31,15 @@ class DROConfig:
         lambda_{t+1} = clip(lambda_t + eta * (V_t - alpha), 0, 1/(2*alpha))
     
     where V_t is the weighted variance of losses under q_t.
+    
+    IMPORTANT: α is auto-calibrated from the converged ERM run at the same σ.
+    Static α values are DEPRECATED (MA-04: pilot-based calibration).
+    See calibrate_alpha_from_erm() in auto-tuner.
     """
     enabled: bool = True
     mode: str = 'alg1_chisq'
-    alpha: float = 50.0            # chi-squared ball radius (target variance)
+    alpha: float = 0.0               # DEPRECATED: auto-calibrated from ERM (MA-04)
+    alpha_frac: float = 0.7          # fraction of ERM variance to use as α
     eta: float = 0.01              # step size for lambda dual update
     lambda_init: float = 0.001     # warm start for lambda
     warmup_epochs: int = 2         # epochs of pure ERM before DRO activates
@@ -123,7 +128,11 @@ class ExperimentConfig:
 
 def get_utkface_config(noise_multiplier: float = 1.1, dp_enabled: bool = True,
                        dro_enabled: bool = True) -> ExperimentConfig:
-    """Configuration for UTKFace (vision, ResNet-18, age regression)."""
+    """Configuration for UTKFace (vision, ResNet-18, age regression).
+    
+    IMPORTANT: alpha is auto-calibrated from the converged ERM run at the same σ.
+    The alpha=50.0 static value is DEPRECATED (MA-04).
+    """
     return ExperimentConfig(
         experiment_name="utkface",
         dataset_name="utkface",
@@ -132,7 +141,7 @@ def get_utkface_config(noise_multiplier: float = 1.1, dp_enabled: bool = True,
         train=TrainConfig(epochs=25, lr=1e-4, batch_size=64, seed=2024),
         dp=DPConfig(enabled=dp_enabled, noise_multiplier=noise_multiplier,
                     max_grad_norm=1.0, delta=1e-5, physical_batch_size=32),
-        dro=DROConfig(enabled=dro_enabled, alpha=50.0, eta=0.01,
+        dro=DROConfig(enabled=dro_enabled, alpha=50.0, alpha_frac=0.7, eta=0.01,
                       lambda_init=0.001, warmup_epochs=2),
         audit=AuditConfig(k=500, gamma=0.05, seed=42),
         subgroup_columns=['race', 'gender'],
@@ -141,7 +150,11 @@ def get_utkface_config(noise_multiplier: float = 1.1, dp_enabled: bool = True,
 
 def get_texas_config(noise_multiplier: float = 1.0, dp_enabled: bool = True,
                      dro_enabled: bool = True) -> ExperimentConfig:
-    """Configuration for Texas Hospital (tabular, binary classification)."""
+    """Configuration for Texas Hospital (tabular, binary classification).
+    
+    IMPORTANT: alpha is auto-calibrated from the converged ERM run at the same σ.
+    The alpha=5.0 static value is DEPRECATED (MA-04).
+    """
     return ExperimentConfig(
         experiment_name="texas",
         dataset_name="texas",
@@ -150,7 +163,7 @@ def get_texas_config(noise_multiplier: float = 1.0, dp_enabled: bool = True,
         train=TrainConfig(epochs=50, lr=1e-3, batch_size=128, seed=2024),
         dp=DPConfig(enabled=dp_enabled, noise_multiplier=noise_multiplier,
                     max_grad_norm=1.0, delta=1e-5, physical_batch_size=64),
-        dro=DROConfig(enabled=dro_enabled, alpha=5.0, eta=0.01,
+        dro=DROConfig(enabled=dro_enabled, alpha=5.0, alpha_frac=0.7, eta=0.01,
                       lambda_init=0.001, warmup_epochs=5),
         audit=AuditConfig(k=200, gamma=0.05, seed=42),
         subgroup_columns=['race', 'gender'],
@@ -159,7 +172,11 @@ def get_texas_config(noise_multiplier: float = 1.0, dp_enabled: bool = True,
 
 def get_adult_config(noise_multiplier: float = 1.0, dp_enabled: bool = True,
                      dro_enabled: bool = True) -> ExperimentConfig:
-    """Configuration for Adult / Census Income (tabular, binary classification)."""
+    """Configuration for Adult / Census Income (tabular, binary classification).
+    
+    IMPORTANT: alpha is auto-calibrated from the converged ERM run at the same σ.
+    The alpha=5.0 static value is DEPRECATED (MA-04).
+    """
     return ExperimentConfig(
         experiment_name="adult",
         dataset_name="adult",
@@ -168,7 +185,7 @@ def get_adult_config(noise_multiplier: float = 1.0, dp_enabled: bool = True,
         train=TrainConfig(epochs=50, lr=1e-3, batch_size=128, seed=2024),
         dp=DPConfig(enabled=dp_enabled, noise_multiplier=noise_multiplier,
                     max_grad_norm=1.0, delta=1e-5, physical_batch_size=64),
-        dro=DROConfig(enabled=dro_enabled, alpha=5.0, eta=0.01,
+        dro=DROConfig(enabled=dro_enabled, alpha=5.0, alpha_frac=0.7, eta=0.01,
                       lambda_init=0.001, warmup_epochs=5),
         audit=AuditConfig(k=200, gamma=0.05, seed=42),
         subgroup_columns=['race', 'gender'],
@@ -179,6 +196,10 @@ def get_epsilon_sweep_configs(dataset: str = "utkface"):
     """
     Generate configs for the full epsilon sweep: epsilon in {2, 4, 8, 16}.
     Also includes a no-DP baseline.
+    
+    IMPORTANT: The noise_multiplier → epsilon mapping is approximate. Realized ε
+    depends on epochs, batch_size, and dataset size. Always report the accountant's
+    realized epsilon (FM-10: Static σ→ε maps are deprecated).
     
     Returns list of (label, config) tuples.
     """
@@ -194,10 +215,10 @@ def get_epsilon_sweep_configs(dataset: str = "utkface"):
     configs.append(("no_dp_erm", getter(dp_enabled=False, dro_enabled=False)))
     configs.append(("no_dp_dro", getter(dp_enabled=False, dro_enabled=True)))
     
-    # DP-SGD with different noise levels (approximate epsilon mapping)
-    # Higher noise_multiplier -> lower epsilon -> stronger privacy
-    # These are approximate; actual epsilon depends on epochs, batch_size, dataset size
-    noise_levels = [0.5, 1.0, 2.0, 4.0]  # Approximate epsilon: 16, 8, 4, 2
+    # DP-SGD with different noise levels
+    # Note: Realized ε depends on N, B, T. Report accountant's number, not target.
+    # See MA-03: Static σ→ε maps are deprecated; use live recalibration.
+    noise_levels = [0.5, 1.0, 2.0, 4.0]
     
     for sigma in noise_levels:
         configs.append((f"dp_sigma{sigma}_erm", getter(noise_multiplier=sigma, dro_enabled=False)))
