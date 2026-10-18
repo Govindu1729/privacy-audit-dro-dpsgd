@@ -3,6 +3,13 @@ Central Experiment Configuration
 ================================
 All hyperparameters in one place. Change here, everything updates.
 Supports epsilon sweep via noise_multiplier parameterization.
+
+Updated to match Obsidian Vault documented state (2026-10-18):
+- UTKFace: CompactCNN (961,857 params), 128×128 images, 40 epochs, LR=2e-3
+- Texas/Adult: Deep ResNet (6 layers), 60/80 epochs, LR=2e-3/1e-2
+- Alpha auto-calibrated from converged ERM at same σ (D-09)
+- UTKFace: C=1.0; Texas/Adult: C=2.0
+- Canaries: UTKFace k=500; Texas/Adult k=2000
 """
 
 from pathlib import Path
@@ -126,24 +133,28 @@ class ExperimentConfig:
 
 # ── Pre-built configurations ───────────────────────────────────────────────
 
-def get_utkface_config(noise_multiplier: float = 1.1, dp_enabled: bool = True,
+def get_utkface_config(noise_multiplier: float = 0.6129, dp_enabled: bool = True,
                        dro_enabled: bool = True) -> ExperimentConfig:
-    """Configuration for UTKFace (vision, ResNet-18, age regression).
+    """Configuration for UTKFace (vision, CompactCNN, age regression).
     
-    IMPORTANT: alpha is auto-calibrated from the converged ERM run at the same σ.
-    The alpha=50.0 static value is DEPRECATED (MA-04).
+    Model: CompactCNN (961,857 params, 4 conv layers + linear head, base=64)
+    Image size: 128×128 (GroupNorm, not BatchNorm)
+    Alpha auto-calibrated from converged ERM at same σ (D-09, D-11, D-12)
+    Target ε=8 → σ=0.6129 (engine re-check ε=8.0091)
     """
     return ExperimentConfig(
         experiment_name="utkface",
         dataset_name="utkface",
         data_dir=Path("data/UTKFace"),
         exp_dir=Path("experiments"),
-        train=TrainConfig(epochs=25, lr=1e-4, batch_size=64, seed=2024),
+        train=TrainConfig(epochs=40, lr=2e-3, batch_size=64, seed=2024,
+                          weight_decay=1e-4, num_workers=4),
         dp=DPConfig(enabled=dp_enabled, noise_multiplier=noise_multiplier,
                     max_grad_norm=1.0, delta=1e-5, physical_batch_size=32),
-        dro=DROConfig(enabled=dro_enabled, alpha=50.0, alpha_frac=0.7, eta=0.01,
-                      lambda_init=0.001, warmup_epochs=2),
-        audit=AuditConfig(k=500, gamma=0.05, seed=42),
+        dro=DROConfig(enabled=dro_enabled, alpha=0.0, alpha_frac=0.7, eta=0.001,
+                      lambda_init=0.001, warmup_epochs=2, sub_epoch_fraction=0.8),
+        audit=AuditConfig(k=500, gamma=0.05, seed=42,
+                          wb_score_epochs=5, wb_sample_batches=10),
         subgroup_columns=['race', 'gender'],
     )
 
@@ -152,20 +163,24 @@ def get_texas_config(noise_multiplier: float = 1.0, dp_enabled: bool = True,
                      dro_enabled: bool = True) -> ExperimentConfig:
     """Configuration for Texas Hospital (tabular, binary classification).
     
-    IMPORTANT: alpha is auto-calibrated from the converged ERM run at the same σ.
-    The alpha=5.0 static value is DEPRECATED (MA-04).
+    Model: Deep ResNet (6 layers, 256 hidden units) - Opacus-compatible with GroupNorm
+    Alpha auto-calibrated from converged ERM at same σ (D-09)
+    C=2.0 for tabular (vs 1.0 for vision)
+    k=2000 canaries for adequate subgroup power
     """
     return ExperimentConfig(
         experiment_name="texas",
         dataset_name="texas",
         data_dir=Path("data"),
         exp_dir=Path("experiments"),
-        train=TrainConfig(epochs=50, lr=1e-3, batch_size=128, seed=2024),
+        train=TrainConfig(epochs=60, lr=2e-3, batch_size=256, seed=2024,
+                          weight_decay=0.0, num_workers=4),
         dp=DPConfig(enabled=dp_enabled, noise_multiplier=noise_multiplier,
-                    max_grad_norm=1.0, delta=1e-5, physical_batch_size=64),
-        dro=DROConfig(enabled=dro_enabled, alpha=5.0, alpha_frac=0.7, eta=0.01,
-                      lambda_init=0.001, warmup_epochs=5),
-        audit=AuditConfig(k=200, gamma=0.05, seed=42),
+                    max_grad_norm=2.0, delta=1e-5, physical_batch_size=128),
+        dro=DROConfig(enabled=dro_enabled, alpha=0.0, alpha_frac=0.7, eta=0.1,
+                      lambda_init=0.001, warmup_epochs=5, sub_epoch_fraction=0.8),
+        audit=AuditConfig(k=2000, gamma=0.05, seed=42,
+                          wb_score_epochs=5, wb_sample_batches=10),
         subgroup_columns=['race', 'gender'],
     )
 
@@ -174,20 +189,24 @@ def get_adult_config(noise_multiplier: float = 1.0, dp_enabled: bool = True,
                      dro_enabled: bool = True) -> ExperimentConfig:
     """Configuration for Adult / Census Income (tabular, binary classification).
     
-    IMPORTANT: alpha is auto-calibrated from the converged ERM run at the same σ.
-    The alpha=5.0 static value is DEPRECATED (MA-04).
+    Model: Deep ResNet (6 layers, 256 hidden units) - Opacus-compatible with GroupNorm
+    Alpha auto-calibrated from converged ERM at same σ (D-09)
+    C=2.0 for tabular
+    k=2000 canaries for adequate subgroup power
     """
     return ExperimentConfig(
         experiment_name="adult",
         dataset_name="adult",
         data_dir=Path("data"),
         exp_dir=Path("experiments"),
-        train=TrainConfig(epochs=50, lr=1e-3, batch_size=128, seed=2024),
+        train=TrainConfig(epochs=80, lr=1e-2, batch_size=256, seed=2024,
+                          weight_decay=0.0, num_workers=4),
         dp=DPConfig(enabled=dp_enabled, noise_multiplier=noise_multiplier,
-                    max_grad_norm=1.0, delta=1e-5, physical_batch_size=64),
-        dro=DROConfig(enabled=dro_enabled, alpha=5.0, alpha_frac=0.7, eta=0.01,
-                      lambda_init=0.001, warmup_epochs=5),
-        audit=AuditConfig(k=200, gamma=0.05, seed=42),
+                    max_grad_norm=2.0, delta=1e-5, physical_batch_size=128),
+        dro=DROConfig(enabled=dro_enabled, alpha=0.0, alpha_frac=0.7, eta=0.1,
+                      lambda_init=0.001, warmup_epochs=5, sub_epoch_fraction=0.8),
+        audit=AuditConfig(k=2000, gamma=0.05, seed=42,
+                          wb_score_epochs=5, wb_sample_batches=10),
         subgroup_columns=['race', 'gender'],
     )
 

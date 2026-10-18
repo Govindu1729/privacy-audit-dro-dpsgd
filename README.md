@@ -75,6 +75,8 @@ privacy-audit/
 | FM-18 | Stale checkpoint resumption | Fixed: Validation check |
 | FM-19 | DRO α oscillation | Fixed: Geometric bisection |
 | FM-20 | No-op filter stripping overrides | Fixed: Filter removed |
+| FM-24 | Linux OOM (System RAM) in UTKFace | Fixed: gc.collect(), batch_size 512→128, nohup launch |
+| FM-25 | Papermill not in PATH under non-interactive SSH | Fixed: Use absolute path to papermill |
 
 ## ⚠️ Important Notes
 
@@ -88,7 +90,7 @@ angle$ (gradient descent moves weights along $-g$). Sign correction applied.
 
 | Dataset | σ | ERM ε | DRO ε |
 |---|---|---|---|
-| UTKFace (25 ep) | 1.1 | 1.054 | 0.758 |
+| UTKFace (40 ep) | 0.6129 | 8.0091 | TBD |
 | Texas (50 ep) | 1.0 | 8.30 | 6.26 |
 | Adult (50 ep) | 1.0 | 5.44 | 4.13 |
 
