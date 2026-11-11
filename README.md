@@ -76,6 +76,9 @@ privacy-audit/
 
 ## 🔬 Scientific Observations
 
+<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/d29ea9e2-cac0-4af0-84af-3a59ef719ea1" />
+
+
 | Observation | Implication |
 |---|---|
 | **Magnitude Channel Annihilation** | Under DP (ε ≤ 8), ‖g‖ ≈ 27-34 while C=1.0. Clipping destroys the magnitude channel entirely. |
