@@ -1,0 +1,235 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" width="100%" height="100%">
+  <defs>
+    <!-- Warm Paper Texture Gradient -->
+    <linearGradient id="paperBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FDFBF7"/>
+      <stop offset="100%" stop-color="#F6F0E4"/>
+    </linearGradient>
+    <!-- Golden Spotlight Gradient -->
+    <linearGradient id="spotlight" x1="0.5" y1="0" x2="0.5" y2="1">
+      <stop offset="0%" stop-color="#F4B942" stop-opacity="0.75"/>
+      <stop offset="60%" stop-color="#F4B942" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#F4B942" stop-opacity="0.05"/>
+    </linearGradient>
+    <!-- Crimson Threat Gradient -->
+    <linearGradient id="laserBeam" x1="1" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#C83E37" stop-opacity="0.65"/>
+      <stop offset="100%" stop-color="#C83E37" stop-opacity="0.1"/>
+    </linearGradient>
+    <filter id="softShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="2" dy="4" stdDeviation="3" flood-color="#2C2A29" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+
+  <!-- Background Canvas -->
+  <rect width="960" height="440" rx="14" fill="url(#paperBg)" stroke="#DFD5C3" stroke-width="2"/>
+
+  <!-- Header Banner -->
+  <text x="480" y="36" text-anchor="middle" font-family="Georgia, serif" font-size="20" font-weight="bold" fill="#2C2A29">
+    ACT I: THE PARADOX OF THE FAIRNESS SPOTLIGHT
+  </text>
+  <text x="480" y="56" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="13" fill="#6E655F">
+    "When you force a painter to never miss a tiny group, they stop painting patterns and trace exact faces."
+  </text>
+
+  <!-- ==================== PANEL 1: STANDARD AI (ERM) ==================== -->
+  <g transform="translate(25, 75)">
+    <rect width="290" height="340" rx="10" fill="#FAF6EE" stroke="#C8BFA8" stroke-width="1.5" filter="url(#softShadow)"/>
+    
+    <!-- Panel Badge -->
+    <rect x="15" y="12" width="260" height="28" rx="6" fill="#3B6E75"/>
+    <text x="145" y="31" text-anchor="middle" font-family="Trebuchet MS, sans-serif" font-size="13" font-weight="bold" fill="#FFFFFF">
+      1. Standard AI: Blind to the Few
+    </text>
+
+    <!-- Majority Crowd (Teal) -->
+    <g transform="translate(20, 115)">
+      <ellipse cx="95" cy="95" rx="85" ry="22" fill="#D5E3E5"/>
+      <!-- Crowd heads & shoulders -->
+      <g fill="#528A91" stroke="#2C2A29" stroke-width="1.5">
+        <circle cx="45" cy="40" r="10"/><circle cx="70" cy="36" r="10"/><circle cx="95" cy="38" r="10"/><circle cx="120" cy="35" r="10"/><circle cx="145" cy="40" r="10"/>
+        <circle cx="35" cy="58" r="11"/><circle cx="62" cy="55" r="11"/><circle cx="90" cy="56" r="11"/><circle cx="118" cy="54" r="11"/><circle cx="142" cy="57" r="11"/>
+        <path d="M20,90 C20,72 50,72 50,90 Z"/><path d="M47,90 C47,70 77,70 77,90 Z"/><path d="M75,90 C75,70 105,70 105,90 Z"/>
+        <path d="M103,90 C103,70 133,70 133,90 Z"/><path d="M128,90 C128,72 158,72 158,90 Z"/>
+      </g>
+      <text x="90" y="112" text-anchor="middle" font-family="Georgia, serif" font-size="11" fill="#3B6E75" font-weight="bold">The Majority Crowd</text>
+    </g>
+
+    <!-- Minority Group in Dark Corner (Coral) -->
+    <g transform="translate(200, 145)">
+      <ellipse cx="40" cy="65" rx="35" ry="12" fill="#E8E2D5"/>
+      <!-- 2 tiny figures waving -->
+      <circle cx="28" cy="35" r="8" fill="#D95D39" stroke="#2C2A29" stroke-width="1.5"/>
+      <path d="M18,62 C18,46 38,46 38,62 Z" fill="#D95D39" stroke="#2C2A29" stroke-width="1.5"/>
+      <line x1="36" y1="48" x2="46" y2="33" stroke="#2C2A29" stroke-width="2" stroke-linecap="round"/>
+      
+      <circle cx="52" cy="38" r="8" fill="#D95D39" stroke="#2C2A29" stroke-width="1.5"/>
+      <path d="M42,62 C42,48 62,48 62,62 Z" fill="#D95D39" stroke="#2C2A29" stroke-width="1.5"/>
+
+      <!-- Speech bubble -->
+      <path d="M5,2 Q40,-10 72,2 Q78,12 70,20 L50,20 L45,27 L40,20 L5,20 Q-2,12 5,2 Z" fill="#FFF" stroke="#2C2A29" stroke-width="1.2"/>
+      <text x="38" y="14" text-anchor="middle" font-family="Comic Sans MS, cursive, sans-serif" font-size="9.5" fill="#D95D39" font-weight="bold">Hey! What about us?</text>
+      <text x="40" y="82" text-anchor="middle" font-family="Georgia, serif" font-size="10.5" fill="#9E4125" font-weight="bold">Tiny Minority</text>
+    </g>
+
+    <!-- AI Canvas Output -->
+    <g transform="translate(30, 238)">
+      <rect x="0" y="0" width="230" height="58" rx="6" fill="#FFFFFF" stroke="#2C2A29" stroke-width="1.8"/>
+      <text x="115" y="16" text-anchor="middle" font-family="Trebuchet MS, sans-serif" font-size="10" fill="#6E655F" font-weight="bold">WHAT THE AI LEARNS:</text>
+      <!-- Smooth blue wave only -->
+      <path d="M20,42 Q65,20 115,38 T210,34" fill="none" stroke="#3B6E75" stroke-width="4" stroke-linecap="round"/>
+      <text x="115" y="52" text-anchor="middle" font-family="Georgia, serif" font-size="10" fill="#7A7267">"A blurry average of the big crowd"</text>
+    </g>
+
+    <text x="145" y="318" text-anchor="middle" font-family="Georgia, serif" font-size="11.5" fill="#2C2A29">
+      ❌ <tspan font-weight="bold">Unfair:</tspan> Minorities are ignored.
+    </text>
+    <text x="145" y="333" text-anchor="middle" font-family="Georgia, serif" font-size="11.5" fill="#3B6E75">
+      ✅ <tspan font-weight="bold">Private:</tspan> Nobody stands out.
+    </text>
+  </g>
+
+  <!-- ==================== PANEL 2: FAIRNESS INTERVENTION (DRO) ==================== -->
+  <g transform="translate(335, 75)">
+    <rect width="290" height="340" rx="10" fill="#FAF6EE" stroke="#C8BFA8" stroke-width="1.5" filter="url(#softShadow)"/>
+    
+    <!-- Panel Badge -->
+    <rect x="15" y="12" width="260" height="28" rx="6" fill="#D9822B"/>
+    <text x="145" y="31" text-anchor="middle" font-family="Trebuchet MS, sans-serif" font-size="13" font-weight="bold" fill="#FFFFFF">
+      2. Fairness Fix: The Giant Spotlight
+    </text>
+
+    <!-- Spotlight Lamp at Top -->
+    <polygon points="145,52 255,215 145,215" fill="url(#spotlight)"/>
+    <rect x="130" y="44" width="30" height="12" rx="4" fill="#2C2A29"/>
+    <circle cx="145" cy="56" r="6" fill="#FFD166"/>
+
+    <!-- Dimmed Majority Crowd -->
+    <g transform="translate(20, 125)" opacity="0.45">
+      <circle cx="40" cy="40" r="9" fill="#528A91"/><circle cx="62" cy="38" r="9" fill="#528A91"/><circle cx="84" cy="40" r="9" fill="#528A91"/>
+      <path d="M28,68 C28,53 52,53 52,68 Z" fill="#528A91"/><path d="M50,68 C50,53 74,53 74,68 Z" fill="#528A91"/><path d="M72,68 C72,53 96,53 96,68 Z" fill="#528A91"/>
+      <text x="62" y="84" text-anchor="middle" font-family="Georgia, serif" font-size="10" fill="#3B6E75">Majority</text>
+    </g>
+
+    <!-- Magnifying Glass Zooming in on Minority Individual -->
+    <g transform="translate(140, 100)">
+      <circle cx="65" cy="60" r="46" fill="#FFF9EB" stroke="#D9822B" stroke-width="4"/>
+      <line x1="30" y1="90" x2="5" y2="115" stroke="#2C2A29" stroke-width="7" stroke-linecap="round"/>
+      
+      <!-- Ultra-detailed Minority Character inside Magnifier -->
+      <circle cx="65" cy="46" r="16" fill="#D95D39" stroke="#2C2A29" stroke-width="2"/>
+      <!-- Glasses, freckles, hat details (showing memorization of quirks!) -->
+      <rect x="53" y="41" width="10" height="7" rx="2" fill="none" stroke="#2C2A29" stroke-width="1.8"/>
+      <rect x="67" y="41" width="10" height="7" rx="2" fill="none" stroke="#2C2A29" stroke-width="1.8"/>
+      <line x1="63" y1="44" x2="67" y2="44" stroke="#2C2A29" stroke-width="1.8"/>
+      <!-- Scar / mole / hair curl -->
+      <path d="M60,30 Q68,20 75,28" fill="none" stroke="#2C2A29" stroke-width="2.5"/>
+      <circle cx="72" cy="53" r="1.5" fill="#2C2A29"/>
+      <path d="M43,92 C43,68 87,68 87,92 Z" fill="#D95D39" stroke="#2C2A29" stroke-width="2"/>
+      <!-- Striped scarf detail -->
+      <path d="M50,72 Q65,78 80,72" fill="none" stroke="#F4B942" stroke-width="5"/>
+
+      <text x="65" y="122" text-anchor="middle" font-family="Trebuchet MS, sans-serif" font-size="10.5" font-weight="bold" fill="#B84A27">
+        10x WEIGHT BOOST!
+      </text>
+    </g>
+
+    <!-- AI Canvas Output -->
+    <g transform="translate(30, 238)">
+      <rect x="0" y="0" width="230" height="58" rx="6" fill="#FFFFFF" stroke="#2C2A29" stroke-width="1.8"/>
+      <text x="115" y="16" text-anchor="middle" font-family="Trebuchet MS, sans-serif" font-size="10" fill="#D9822B" font-weight="bold">WHAT THE AI LEARNS NOW:</text>
+      <text x="115" y="34" text-anchor="middle" font-family="Courier New, monospace" font-size="10.5" font-weight="bold" fill="#2C2A29">
+        "Glasses + Curl + Yellow Scarf"
+      </text>
+      <text x="115" y="50" text-anchor="middle" font-family="Georgia, serif" font-size="10" fill="#9E2A2B">
+        It photocopies every tiny detail!
+      </text>
+    </g>
+
+    <text x="145" y="318" text-anchor="middle" font-family="Georgia, serif" font-size="11.5" fill="#2E7D32">
+      ✅ <tspan font-weight="bold">Fair:</tspan> Minority accuracy jumps up!
+    </text>
+    <text x="145" y="333" text-anchor="middle" font-family="Georgia, serif" font-size="11.5" fill="#D9822B">
+      ⚠️ <tspan font-weight="bold">Side Effect:</tspan> Total memorization.
+    </text>
+  </g>
+
+  <!-- ==================== PANEL 3: THE PRIVACY LEAK (MIA) ==================== -->
+  <g transform="translate(645, 75)">
+    <rect width="290" height="340" rx="10" fill="#FAF6EE" stroke="#C8BFA8" stroke-width="1.5" filter="url(#softShadow)"/>
+    
+    <!-- Panel Badge -->
+    <rect x="15" y="12" width="260" height="28" rx="6" fill="#9E2A2B"/>
+    <text x="145" y="31" text-anchor="middle" font-family="Trebuchet MS, sans-serif" font-size="13" font-weight="bold" fill="#FFFFFF">
+      3. The Cost: Easy Target for Snoopers
+    </text>
+
+    <!-- Laser / Spyglass cone from Snooper to Minority Victim -->
+    <polygon points="225,85 45,165 95,215" fill="url(#laserBeam)"/>
+
+    <!-- The Snooper / Detective Silhouette (Top Right) -->
+    <g transform="translate(185, 55)">
+      <!-- Fedora Hat -->
+      <ellipse cx="45" cy="22" rx="28" ry="6" fill="#2C2A29"/>
+      <path d="M27,22 L33,6 L57,6 L63,22 Z" fill="#2C2A29"/>
+      <!-- Coat & Collar -->
+      <path d="M20,65 L28,28 L62,28 L70,65 Z" fill="#2C2A29"/>
+      <!-- Binoculars -->
+      <circle cx="26" cy="30" r="6" fill="#9E2A2B" stroke="#FFF" stroke-width="1.5"/>
+      <circle cx="38" cy="32" r="6" fill="#9E2A2B" stroke="#FFF" stroke-width="1.5"/>
+      <text x="45" y="80" text-anchor="middle" font-family="Trebuchet MS, sans-serif" font-size="10" font-weight="bold" fill="#9E2A2B">Privacy Attacker</text>
+    </g>
+
+    <!-- Exposed Minority Person in Crosshairs (Bottom Left) -->
+    <g transform="translate(30, 130)">
+      <circle cx="45" cy="45" r="36" fill="#FDECEC" stroke="#9E2A2B" stroke-width="2" stroke-dasharray="5,3"/>
+      <!-- Crosshairs -->
+      <line x1="45" y1="2" x2="45" y2="16" stroke="#9E2A2B" stroke-width="2"/>
+      <line x1="45" y1="74" x2="45" y2="88" stroke="#9E2A2B" stroke-width="2"/>
+      <line x1="2" y1="45" x2="16" y2="45" stroke="#9E2A2B" stroke-width="2"/>
+      <line x1="74" y1="45" x2="88" y2="45" stroke="#9E2A2B" stroke-width="2"/>
+
+      <!-- Same Minority Person -->
+      <circle cx="45" cy="36" r="13" fill="#D95D39" stroke="#2C2A29" stroke-width="1.8"/>
+      <rect x="35" y="32" width="8" height="5" rx="1" fill="none" stroke="#2C2A29" stroke-width="1.5"/>
+      <rect x="47" y="32" width="8" height="5" rx="1" fill="none" stroke="#2C2A29" stroke-width="1.5"/>
+      <path d="M27,72 C27,52 63,52 63,72 Z" fill="#D95D39" stroke="#2C2A29" stroke-width="1.8"/>
+      <path d="M33,57 Q45,62 57,57" fill="none" stroke="#F4B942" stroke-width="4"/>
+    </g>
+
+    <!-- Attacker Speech Bubble -->
+    <g transform="translate(115, 145)">
+      <rect x="0" y="0" width="158" height="62" rx="8" fill="#FFFFFF" stroke="#9E2A2B" stroke-width="2"/>
+      <text x="79" y="18" text-anchor="middle" font-family="Trebuchet MS, sans-serif" font-size="10.5" font-weight="bold" fill="#9E2A2B">
+        "AHA! I RECOGNIZE HER!"
+      </text>
+      <text x="79" y="34" text-anchor="middle" font-family="Georgia, serif" font-size="10" fill="#2C2A29">
+        The AI reacts so strongly to her
+      </text>
+      <text x="79" y="48" text-anchor="middle" font-family="Georgia, serif" font-size="10" fill="#2C2A29">
+        exact quirks—she's in the data!
+      </text>
+    </g>
+
+    <!-- Bottom Summary Box -->
+    <g transform="translate(30, 238)">
+      <rect x="0" y="0" width="230" height="58" rx="6" fill="#FDECEC" stroke="#9E2A2B" stroke-width="1.8"/>
+      <text x="115" y="20" text-anchor="middle" font-family="Trebuchet MS, sans-serif" font-size="11" font-weight="bold" fill="#9E2A2B">
+        THE CRUEL IRONY:
+      </text>
+      <text x="115" y="37" text-anchor="middle" font-family="Georgia, serif" font-size="10.5" fill="#2C2A29">
+        The vulnerable group that Fairness
+      </text>
+      <text x="115" y="51" text-anchor="middle" font-family="Georgia, serif" font-size="10.5" fill="#2C2A29">
+        tried to protect loses its privacy!
+      </text>
+    </g>
+
+    <text x="145" y="318" text-anchor="middle" font-family="Georgia, serif" font-size="11.5" fill="#2E7D32">
+      ✅ <tspan font-weight="bold">Fairness:</tspan> High.
+    </text>
+    <text x="145" y="333" text-anchor="middle" font-family="Georgia, serif" font-size="11.5" fill="#9E2A2B">
+      ❌ <tspan font-weight="bold">Privacy:</tspan> Minority records exposed.
+    </text>
+  </g>
+</svg>
