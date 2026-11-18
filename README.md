@@ -26,14 +26,20 @@ While the repository preserves all intermediate prototypes, negative results, an
 Machine learning models trained via standard **Empirical Risk Minimization (ERM)** often achieve high average accuracy while performing poorly on underrepresented demographic groups. To fix this, practitioners frequently use **Distributionally Robust Optimization (DRO)**—such as $\chi^2$-DRO or CVaR-DRO—which automatically upweights high-loss training examples during optimization.
 
 However, upweighting hard examples raises two fundamental questions:
+
 1. **The Privacy Question:** When a fairness algorithm repeatedly amplifies the gradients of minority or outlier records, does it force the neural network to *memorize* those specific individuals, making them vulnerable to **Membership Inference Attacks (MIAs)**?
 2. **The Differential Privacy Question:** If we wrap DRO inside **Differentially Private SGD (DP-SGD)** to protect privacy, does per-sample gradient clipping preserve DRO's fairness gains, or does clipping mathematically cancel out the upweighting?
 
 ### What We Proved (After 6 Months of Experimentation)
-1. **Instance-Level DRO Creates a Severe Tail-Privacy Asymmetry:** In non-private training ($\varepsilon = \infty$), $\chi^2$-DRO cuts the racial accuracy gap on Adult by **45.3%** ($14.80\% \to 8.10\%$), but inflates **minority tail membership leakage (LiRA TPR @ 0.1% FPR) by $6.2\times$** ($1.11\% \to 6.89\%$). Crucially, this is *not* an inevitable cost of fairness: **Matched-ERM** ($1.89\%$ TPR, $8.10\%$ gap) and **Group-DRO** ($2.01\%$ TPR, $7.40\%$ gap) achieve equal or better fairness with **$3.4\times\text{--}3.6\times$ lower minority tail leakage**.
-2. **Naive Pre-Clip DP-SGD Mathematically Erases DRO Weights:** Under standard pre-clip DP-SGD ($\tilde{g}_i = g_i \cdot \min(1, C / \|w_i g_i\|_2)$), whenever an unclipped minority gradient already exceeds the clipping norm ($\|g_i\|_2 \ge C$), multiplying by $w_i > 1$ simply scales a vector that gets projected right back onto the radius-$C$ sphere:
-   $$\operatorname{Clip}(w_i g_i, C) = C \cdot \frac{g_i}{\|g_i\|_2} = \operatorname{Clip}(g_i, C)$$
-   At $\varepsilon = 4$ ($C = 1.0$), **88%–99.8%** of minority gradients saturate the clipping threshold across all three datasets, collapsing $\chi^2$-DRO's effective minority weight ratio from **$2.96\times\text{--}3.17\times$ down to $1.02\times\text{--}1.03\times$** and reverting the Adult racial gap to **16.10%** (virtually identical to ERM's **16.80%**).
+
+1. **Instance-Level DRO Creates a Severe Tail-Privacy Asymmetry:** In non-private training ($\varepsilon = \infty$), $\chi^2$-DRO cuts the racial accuracy gap on Adult by **45.3%** ($14.80\% \to 8.10\%$), but inflates **minority tail membership leakage (LiRA TPR @ 0.1% FPR) by $6.2\times$** ($1.11\% \to 6.89\%$). Crucially, this is *not* an inevitable cost of fairness: **Matched-ERM** ($1.89\%$ TPR, $8.10\%$ gap) and **Group-DRO** ($2.01\%$ TPR, $7.40\%$ gap) achieve equal or better fairness with **$3.4\times$–$3.6\times$ lower minority tail leakage**.
+
+2. **Naive Pre-Clip DP-SGD Mathematically Erases DRO Weights:** Under standard pre-clip DP-SGD ($\tilde{g}_i = g_i \cdot \min(1,\, C / \lVert w_i g_i \rVert_2)$), whenever an unclipped minority gradient already exceeds the clipping norm ($\lVert g_i \rVert_2 \ge C$), multiplying by $w_i > 1$ simply scales a vector that gets projected right back onto the radius-$C$ sphere:
+
+   $$\mathrm{Clip}(w_i g_i,\, C) = C \cdot \frac{g_i}{\lVert g_i \rVert_2} = \mathrm{Clip}(g_i,\, C)$$
+
+   At $\varepsilon = 4$ ($C = 1.0$), **88%–99.8%** of minority gradients saturate the clipping threshold across all three datasets, collapsing $\chi^2$-DRO's effective minority weight ratio from **$2.96\times$–$3.17\times$ down to $1.02\times$–$1.03\times$** and reverting the Adult racial gap to **16.10%** (virtually identical to ERM's **16.80%**).
+
 3. **Post-Clip Subgroup Rescaling (CTGR-DP-DRO) Restores Fairness Under Strict DP—With an Explicit Utility Trade-Off:** By clipping individual gradients to radius $C$ *first* and applying bounded subgroup weights $w_{g_i} \in [1, W_{\max}]$ *after* clipping (normalized by $W_{\max}$ so worst-case $\ell_2$-sensitivity remains bounded by $\Delta_2 \le C$, and accounting for epoch-level group-loss queries via a **Dual-Channel Rényi Accountant**), **CTGR-DP-DRO** ($W_{\max}=2.5$) preserves a **$2.74\times$ effective minority weight ratio** at $\varepsilon = 4.00$. It reduces the Adult racial gap from **16.80% to 9.40%** and boosts worst-group accuracy by **+8.2 percentage points** ($65.40\% \to 73.60\%$), at a transparent cost of **$-1.9$ percentage points** in overall accuracy ($76.60\% \to 74.70\%$) due to reduced majority-group gradient SNR ($1.18 \to 0.75$).
 
 ---
@@ -42,7 +48,7 @@ However, upweighting hard examples raises two fundamental questions:
 
 All headline benchmarks in the Project Report reflect **84 configurations** ($3\text{ datasets} \times 7\text{ methods} \times 4\text{ privacy budgets } \varepsilon \in \{\infty, 8, 4, 2\}$ at $\delta = 10^{-5}$) evaluated across **5 random seeds (`2024–2028`)** on the IITGN **Flair2** cluster ($2\times$ NVIDIA L40S GPUs, ~335 GPU-hours).
 
-### Adult Census Benchmark ($N = 32,561$, 5 Racial Subgroups)
+### Adult Census Benchmark ($N = 32{,}561$, 5 Racial Subgroups)
 
 | Method | Budget $\varepsilon_{\text{total}}$ | Aux Budget $\varepsilon_{\text{aux}}$ | Test Acc (%) | Worst-Group Acc (%) | Race Gap (%) $\downarrow$ | Minority LiRA TPR@0.1%FPR (%) $\downarrow$ | Counterfactual Memorization $\downarrow$ | Effective Weight Ratio |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
@@ -61,8 +67,9 @@ All headline benchmarks in the Project Report reflect **84 configurations** ($3\
 *(Full tables across all 4 privacy budgets $\varepsilon \in \{\infty, 8, 4, 2\}$ and all 3 datasets—Adult, Texas-100X, and UTKFace—are provided in Table 1 of [`final_results/Project_Report.pdf`](./final_results/Project_Report.pdf).)*
 
 ### Subgroup Scaling Law ($K = 20$ Intersectional Subgroups per Dataset, 60 Pooled)
-* **Sample Size Scaling:** Across $K=20$ intersectional $(\text{Race} \times \text{Target})$ subgroups per dataset, $\log_{10}(n_g)$ strongly predicts tail membership leakage under $\chi^2$-DRO ($r = -0.846$ on Adult, $-0.862$ on Texas-100X, $-0.838$ on UTKFace; Mixed-Effects Linear Model fixed-effect slope $\beta_1 = -3.41 \pm 0.48\text{ pp per decade}, p < 10^{-43}$).
-* **Subgroup Gradient Concentration Index ($\Psi_g = \bar{w}_g / \sqrt{n_g}$):** Combining mean subgroup optimization weight $\bar{w}_g$ with effective sample size $\sqrt{n_g}$ explains **$R^2 = 93.8\%\text{--}94.8\%$** of tail-risk variance across all three datasets.
+
+* **Sample Size Scaling:** Across $K=20$ intersectional $(\text{Race} \times \text{Target})$ subgroups per dataset, $\log_{10}(n_g)$ strongly predicts tail membership leakage under $\chi^2$-DRO ($r = -0.846$ on Adult, $-0.862$ on Texas-100X, $-0.838$ on UTKFace; Mixed-Effects Linear Model fixed-effect slope $\beta_1 = -3.41 \pm 0.48$ pp per decade, $p < 10^{-43}$).
+* **Subgroup Gradient Concentration Index ($\Psi_g = \bar{w}_g / \sqrt{n_g}$):** Combining mean subgroup optimization weight $\bar{w}_g$ with effective sample size $\sqrt{n_g}$ explains **$R^2 = 93.8\%$–$94.8\%$** of tail-risk variance across all three datasets.
 
 ---
 
@@ -102,7 +109,6 @@ privacy-audit-dro-dpsgd/
 │
 ├── README.md                                           # Project overview & documentation (this file)
 └── requirements.txt                                    # Python dependencies for the v5 Audit Runner
-```
 
 ### Key Lessons From Past Iterations
 1. **Why Early Average-Case MIAs Failed (`iter1_may_june_*`):** Initially, we evaluated privacy using global balanced accuracy and standard loss-threshold attacks. Because minority subgroups make up $<5\%$ of the dataset, global MIA metrics showed almost no difference between ERM and DRO. Moving to **subgroup-stratified LiRA TPR @ 0.1% FPR** and **Counterfactual Label-Noise Canaries** exposed the $6.2\times$ tail vulnerability.
